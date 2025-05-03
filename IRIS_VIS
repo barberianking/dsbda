@@ -1,0 +1,62 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from mpl_toolkits.mplot3d import Axes3D
+
+# Load the Iris dataset
+df = pd.read_csv('iris.csv')  # Make sure the file path is correct
+
+# 1. Basic Data Cleaning
+print("Null values before cleaning:\n", df.isnull().sum())
+
+# Drop rows with any missing values
+df.dropna(inplace=True)
+
+print("\nNull values after cleaning:\n", df.isnull().sum())
+
+# Set up visual style
+sns.set(style="whitegrid")
+
+# Create a 2x2 grid of plots
+fig = plt.figure(figsize=(20, 16))
+
+# a. 1D Plot: Histogram of Petal Length
+ax1 = fig.add_subplot(2, 2, 1)
+sns.histplot(df['petal_length'], bins=20, kde=True, ax=ax1, color='purple')
+ax1.set_title('1D Histogram of Petal Length')
+ax1.set_xlabel('Petal Length')
+ax1.set_ylabel('Frequency')
+ax1.grid(True)
+
+# b. 2D Plot: Sepal Length vs Sepal Width by Species
+ax2 = fig.add_subplot(2, 2, 2)
+sns.scatterplot(data=df, x='sepal_length', y='sepal_width', hue='species', ax=ax2)
+ax2.set_title('2D Scatter Plot: Sepal Length vs Sepal Width')
+ax2.set_xlabel('Sepal Length')
+ax2.set_ylabel('Sepal Width')
+ax2.grid(True)
+
+# c. 3D Plot: Petal Length, Petal Width, Sepal Length
+ax3 = fig.add_subplot(2, 2, 3, projection='3d')
+colors = {'setosa': 'red', 'versicolor': 'green', 'virginica': 'blue'}
+for species in df['species'].unique():
+    subset = df[df['species'] == species]
+    ax3.scatter(subset['petal_length'], subset['petal_width'], subset['sepal_length'],
+                color=colors[species], label=species, s=50)
+ax3.set_xlabel('Petal Length')
+ax3.set_ylabel('Petal Width')
+ax3.set_zlabel('Sepal Length')
+ax3.set_title('3D Scatter Plot')
+ax3.legend()
+
+# d. Temporal Plot: Simulated Time using Row Index
+ax4 = fig.add_subplot(2, 2, 4)
+df['index'] = df.index
+sns.lineplot(data=df, x='index', y='sepal_length', hue='species', ax=ax4)
+ax4.set_title('Temporal Plot: Sepal Length Over Index (Simulated Time)')
+ax4.set_xlabel('Index (Simulated Time)')
+ax4.set_ylabel('Sepal Length')
+ax4.grid(True)
+
+plt.tight_layout()
+plt.show()
