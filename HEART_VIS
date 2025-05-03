@@ -1,0 +1,53 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the Heart Disease dataset
+df = pd.read_csv('heart.csv')  # Change path if needed
+
+# Show null values before cleaning
+print("Null values before cleaning:\n", df.isnull().sum())
+
+# Set up visual style
+sns.set(style="whitegrid")
+
+# Handle missing values (if any)
+# You can fill missing values with the mean or drop rows as needed, here's an example:
+df.fillna(df.mean(), inplace=True)  # Fill missing values with column mean
+
+# Show null values after cleaning
+print("\nNull values after cleaning:\n", df.isnull().sum())
+
+# Create a 2x2 grid of plots
+fig, axs = plt.subplots(2, 2, figsize=(16, 12))
+
+# 1. Boxplot: Cholesterol levels by heart disease status
+sns.boxplot(x='target', y='chol', data=df, ax=axs[0, 0])
+axs[0, 0].set_title('Boxplot of Cholesterol by Heart Disease Status')
+axs[0, 0].set_xlabel('Heart Disease (1=Yes, 0=No)')
+axs[0, 0].set_ylabel('Cholesterol')
+
+# 2. Histogram: Age distribution
+sns.histplot(df['age'], bins=20, kde=True, ax=axs[0, 1], color='skyblue')
+axs[0, 1].set_title('Histogram of Age')
+axs[0, 1].set_xlabel('Age')
+axs[0, 1].set_ylabel('Frequency')
+
+# 3. Single Line Graph: Average maximum heart rate by age
+avg_thalach_by_age = df.groupby('age')['thalach'].mean()
+axs[1, 0].plot(avg_thalach_by_age.index, avg_thalach_by_age.values, color='green')
+axs[1, 0].set_title('Average Maximum Heart Rate by Age')
+axs[1, 0].set_xlabel('Age')
+axs[1, 0].set_ylabel('Average Max Heart Rate')
+
+# 4. Multiple Line Graph: Average cholesterol by age for males and females
+avg_chol_by_age_sex = df.groupby(['age', 'sex'])['chol'].mean().unstack()
+axs[1, 1].plot(avg_chol_by_age_sex.index, avg_chol_by_age_sex[0], label='Female', color='red')
+axs[1, 1].plot(avg_chol_by_age_sex.index, avg_chol_by_age_sex[1], label='Male', color='blue')
+axs[1, 1].set_title('Average Cholesterol by Age and Sex')
+axs[1, 1].set_xlabel('Age')
+axs[1, 1].set_ylabel('Average Cholesterol')
+axs[1, 1].legend()
+
+plt.tight_layout()
+plt.show()
