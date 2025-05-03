@@ -3,6 +3,16 @@ import pandas as pd
 # Load the dataset
 df = pd.read_csv("Amazonbookreviews.csv")
 
+# Check column names
+print("Columns in dataset:", df.columns)
+
+# Basic Cleaning (fixing column names if needed)
+df.columns = df.columns.str.strip()  # remove leading/trailing spaces
+
+# Use correct column name after checking it
+df['reviewername'] = df['reviewername'].fillna("Unknown")
+df['overallRating'] = df['overallRating'].fillna(df['overallRating'].mean())
+
 # a. Creating subsets of the dataset row-wise
 subset1 = df.iloc[:20]  # First 20 rows
 subset2 = df.iloc[20:]  # Remaining rows
@@ -16,25 +26,18 @@ sorted_df = df.sort_values(by='overallRating', ascending=False)
 # d. Transposing data (only first 5 rows for readability)
 transposed_df = df.head().transpose()
 
-# e. Reshaping data: count of reviews per reviewer (row-wise)
+# e. Reshaping data: count of reviews per reviewer
 reshaped_df = df.groupby('reviewername').size().reset_index(name='review_count')
 
 # f. Creating subsets of the dataset column-wise
 col_subset = df[['reviewerID', 'reviewername', 'overallRating']]
 
 # g. Merging datasets column-wise
-col_part1 = df.iloc[:, :4]   # First 4 columns
-col_part2 = df.iloc[:, 4:]   # Remaining columns
+col_part1 = df.iloc[:, :4]
+col_part2 = df.iloc[:, 4:]
 merged_cols = pd.concat([col_part1, col_part2], axis=1)
 
 # Display example outputs
-print("Row Subset 1 (first 5 rows):\n", subset1.head(), "\n")
-print("Row Subset 2 (first 5 rows):\n", subset2.head(), "\n")
-print("Merged Rows (first 5 rows):\n", merged_rows.head(), "\n")
-print("Sorted by Rating (first 5 rows):\n", sorted_df.head(), "\n")
-print("Transposed (first 5 rows):\n", transposed_df, "\n")
-print("Reshaped (count of reviews per reviewer):\n", reshaped_df.head(), "\n")
-
-# Optional: Show shapes to confirm sizes
-print("\nShape of Merged Rows: ", merged_rows.shape)
-print("Shape of Reshaped Data: ", reshaped_df.shape)
+print("Row Subset 1:\n", subset1.head(), "\n")
+print("Sorted by Rating:\n", sorted_df.head(), "\n")
+print("Reshaped Reviewer Counts:\n", reshaped_df.head(), "\n")
