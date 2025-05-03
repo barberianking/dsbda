@@ -1,0 +1,47 @@
+import pandas as pd
+
+# Load the Facebook metrics dataset (ensure correct separator is used)
+df = pd.read_csv("dataset_Facebook.csv", sep=';')
+
+# Check the first few rows to confirm that the data is loaded correctly
+print("First few rows of the dataset:\n", df.head())
+
+# Check the column names to confirm they are now separated correctly
+print("Updated column names in the dataset:", df.columns)
+
+# ---- Data Cleaning ----
+# Handle missing values (fill NaN with appropriate values)
+
+# Example: Fill missing values for 'like', 'comment', and 'share' columns
+df['like'] = df['like'].fillna(df['like'].mean())
+df['comment'] = df['comment'].fillna(df['comment'].mean())
+df['share'] = df['share'].fillna(df['share'].mode()[0])
+
+# ---- Data Inspection ----
+# Check for any remaining missing values
+print("\nCheck for remaining missing values:\n", df.isnull().sum())
+
+# ---- Transposing Data ----
+# Transpose the first 5 rows of the dataset for inspection
+transposed_df = df.head().transpose()
+print("\nTransposed Data (first 5 rows):\n", transposed_df)
+
+# ---- Sorting Data ----
+# Sort data by 'Total Interactions' (or any column you prefer)
+sorted_df = df.sort_values(by='Total Interactions', ascending=False)
+print("\nSorted Data (by Total Interactions):\n", sorted_df.head())
+
+# ---- Creating Data Subsets ----
+# Example: Create a subset of rows (first 10 rows)
+subset = df.head(10)
+print("\nSubset of Data (first 10 rows):\n", subset)
+
+# ---- Merging Data ----
+# Example: Merge the first 5 rows with the next 5 rows
+subset1 = df.head(5)
+subset2 = df.iloc[5:10]
+merged_data = pd.concat([subset1, subset2], axis=0)
+print("\nMerged Data (first 10 rows):\n", merged_data)
+
+# Optional: Save cleaned data to a new CSV file
+# df.to_csv('cleaned_facebook_data.csv', index=False)
