@@ -1,0 +1,71 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler
+
+# Load the heart disease dataset
+df = pd.read_csv('heart.csv')
+
+# 1) Basic Data Cleaning
+
+# Show dataset information (data types, non-null counts)
+print("Dataset info before cleaning:\n")
+print(df.info())
+
+# Check for duplicates
+duplicates = df.duplicated().sum()
+print(f"\nNumber of duplicate rows: {duplicates}")
+
+# Remove duplicates if any
+df.drop_duplicates(inplace=True)
+
+# Check for missing values
+print("\nMissing values before cleaning:\n", df.isnull().sum())
+
+# Handle missing values: If any, drop or fill with mean/median
+# In this case, there are no missing values, but if there were, you could do this:
+# df.fillna(df.mean(), inplace=True)  # Fill missing values with column mean
+# Or
+# df.dropna(inplace=True)  # If you prefer to drop rows with missing values
+
+# 2) Data Integration (Skip if no additional datasets to merge)
+
+# 3) Data Transformation
+
+# Normalize features (scaling the data)
+scaler = StandardScaler()
+X = df.drop('target', axis=1)  # Features (excluding target)
+y = df['target']  # Target (heart disease or not)
+
+# Standardize features
+X_scaled = scaler.fit_transform(X)
+
+# 4) Data Model Building
+
+# Train-test split (80% for training, 20% for testing)
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+
+# Logistic Regression model
+model = LogisticRegression(max_iter=1000)
+model.fit(X_train, y_train)
+
+# Predict on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f'\nModel Accuracy: {accuracy * 100:.2f}%')
+
+# Show dataset information after cleaning
+print("\nDataset info after cleaning:\n")
+print(df.info())
+
+# Show the first few rows of the cleaned dataset
+print("\nFirst few rows of the cleaned dataset:\n")
+print(df.head())
+
+# Show the summary statistics to inspecat the data distribution
+print("\nSummary statistics of the dataset:\n")
+print(df.describe())
